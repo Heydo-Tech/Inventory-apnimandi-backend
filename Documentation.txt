@@ -1,0 +1,8 @@
+1-> User Routes
+/user/create POST Authenticated With Headers JWT Token      const { name, password, role, establishmentId } = req.body;
+/user/login POST       const { name, password, establishmentId } = req.body;
+/user/delete delete Authenticated With Headers JWT Token  const { name, establishmentId } = req.body;
+
+
+2-->Inventory Routes 
+/inventory/inventory POST   const { barcodeOrSKU, quantity, remarks, establishment, username } = req.body;

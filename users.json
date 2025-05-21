@@ -1,0 +1,10 @@
+{
+    "harsh": {
+        "password": "scrypt:32768:8:1$uu6DdFILbsjpIZ0s$73f47a4d4135f44eb9e6d185fbe7eff577164c63b367b8e9f1b9818ec0bbd62dbdb0fb08709394772b841a9a1672482da181937c515b263cd7454ccbd84c43a4",
+        "role": "Waste Management"
+    },
+    "newuser": {
+        "password": "scrypt:32768:8:1$illt03Er2k1VXRV3$b1d981c3a53b4084e2a1a689279d2ba6e7cb2cd5a2ca5930728030a2cce2c4f9b0b3a6f4901b26c7cbcc5f14a29fa0481e7e8c6e4a0818d47e66e50d4e74824d",
+        "role": "Product Management"
+    }
+}

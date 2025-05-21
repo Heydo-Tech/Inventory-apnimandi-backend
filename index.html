@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode and Quantity Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f8fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 48%;
+            padding: 12px 15px;
+            margin: 10px 1%;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #scanBtn {
+            background-color: #007bff;
+        }
+
+        #scanBtn:hover {
+            background-color: #0056b3;
+        }
+
+        .product-info {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .product-info p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Enter Barcode and Quantity</h2>
+        <form>
+            <input type="text" id="barcode" placeholder="Enter Barcode" required><br>
+            <input type="number" id="quantity" placeholder="Enter Quantity" min="1" required><br>
+            <button type="button" id="scanBtn" onclick="scanBarcode()">Scan</button>
+            <button type="button" onclick="submitProduct()">Submit</button>
+        </form>
+        <div class="product-info" id="productInfo"></div>
+    </div>
+
+    <script>
+        async function scanBarcode() {
+            const barcode = document.getElementById('barcode').value;
+
+            if (!barcode) {
+                alert('Please enter a barcode.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ barcode: barcode }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('productInfo').innerHTML = `
+                        <p><strong>Product Name:</strong> ${data.productName || 'N/A'}</p>
+                        <p><strong>Product Category:</strong> ${data.productCategory || 'N/A'}</p>
+                        <p><strong>Product Subcategory:</strong> ${data.productSubcategory || 'N/A'}</p>
+                        <p><strong>SKU:</strong> ${data.sku || 'N/A'}</p>
+                    `;
+                } else {
+                    document.getElementById('productInfo').innerHTML = `<p class="alert">${data.message || 'Error fetching product'}</p>`;
+                }
+            } catch (error) {
+                console.error('Error fetching product:', error);
+                document.getElementById('productInfo').innerHTML = `<p class="alert">An error occurred while fetching the product.</p>`;
+            }
+        }
+
+        async function submitProduct() {
+            const productName = document.getElementById('productInfo').querySelector('p:nth-child(1)').innerText.split(": ")[1];
+            const productCategory = document.getElementById('productInfo').querySelector('p:nth-child(2)').innerText.split(": ")[1];
+            const productSubcategory = document.getElementById('productInfo').querySelector('p:nth-child(3)').innerText.split(": ")[1];
+            const sku = document.getElementById('productInfo').querySelector('p:nth-child(4)').innerText.split(": ")[1];
+            const quantity = document.getElementById('quantity').value;
+
+            if (!quantity) {
+                alert('Please enter a quantity.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/product/submit-product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productName: productName,
+                        productCategory: productCategory,
+                        productSubcategory: productSubcategory,
+                        sku: sku,
+                        quantity: quantity
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Product details successfully saved to Google Sheets!');
+                } else {
+                    alert(`Failed to save product: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error submitting product:', error);
+                alert('An error occurred while submitting the product.');
+            }
+        }
+    </script>
+</body>
+</html>
