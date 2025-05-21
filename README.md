@@ -32,7 +32,8 @@ Git
 Installation
 
 Clone the repository:
-git clone https://github.com/apni-mandi/apni-mandi-backend.git
+git clone url
+
 cd apni-mandi-backend
 
 Install dependencies:
